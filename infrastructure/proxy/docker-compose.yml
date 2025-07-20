@@ -1,0 +1,66 @@
+services:
+  traefik:
+    image: traefik:v3.4
+    command:
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.asDefault=true"
+      
+      - "--certificatesresolvers.vault.acme.caServer=http://vault:8200/v1/pki_int/acme/directory"
+      - "--certificatesresolvers.vault.acme.email=info@example.com"
+      - "--certificatesresolvers.vault.acme.storage=/acme/acme.json"
+      - "--certificatesresolvers.vault.acme.httpchallenge.entrypoint=web"
+
+      - "--providers.docker=true"
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./acme:/acme"
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - vault
+
+  vault:
+    image: hashicorp/vault:1.20
+    command: server -config=/etc/vault/config.hcl
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_ADDR=http://127.0.0.1:8200
+    volumes:
+      - ./vault-data:/vault/file
+      - ./vault-config.hcl:/etc/vault/config.hcl
+      - ./certs:/certs
+    extra_hosts:
+      - "whoami.benkner-it.test:host-gateway"
+      - "nginx.benkner-it.test:host-gateway"
+
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.benkner-it.test`)"
+      - "traefik.http.routers.whoami.tls.certresolver=vault"
+      - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
+
+  nginx:
+    image: nginx
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.rule=Host(`nginx.benkner-it.test`)"
+      - "traefik.http.routers.nginx.tls.certresolver=vault"
+      - "traefik.http.routers.nginx.tls=true"
+      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+
+networks:
+  traefik:
+    external: true
