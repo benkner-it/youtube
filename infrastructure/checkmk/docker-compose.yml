@@ -1,0 +1,13 @@
+services:
+  checkmk:
+    image: checkmk/check-mk-raw:latest
+    container_name: checkmk
+    restart: unless-stopped
+    ports:
+      - "8080:5000"      # Web UI port (external:internal)
+      - "6556:6556"      # Checkmk agent port (for monitoring)
+    volumes:
+      - checkmk_data:/opt/omd/sites
+
+volumes:
+  checkmk_data:
