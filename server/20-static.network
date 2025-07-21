@@ -1,9 +1,0 @@
-[Match]
-Name=enP3p49s0
-
-[Network]
-Address=192.168.1.100/24
-Gateway=192.168.1.1
-
-DNS=1.1.1.1
-DNS=8.8.8.8

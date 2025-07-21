@@ -51,10 +51,10 @@ usermod -aG docker orangepi
 # Static IP Address
 ##########################################
 
-# check network adapters
+# Check network adapters
 networkctl
 
-# set configuration
+# Set static IP
 cat << EOF | tee /etc/systemd/network/10-static-enP3p49s0.network > /dev/null
 [Match]
 Name=enP3p49s0
@@ -62,19 +62,18 @@ Name=enP3p49s0
 [Network]
 Address=192.168.1.100/24
 Gateway=192.168.1.1
-
-DNS=1.1.1.1
-DNS=8.8.8.8
 EOF
 
-# set dns servers
-ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+# Set dns dns servers
+rm -rf /etc/resolv.conf
+cat << EOF | tee /etc/resolv.conf > /dev/null
+nameserver 1.1.1.1
+nameserver 8.8.8.8
+EOF
 
-# start systemd-networkd and systemd-resolved
+# start systemd-networkd
 systemctl enable systemd-networkd --now
-systemctl enable systemd-resolved --now
 
 # disable old
 systemctl disable NetworkManager --now
-
-reboot
+systemctl disable resolvconf.service --now
