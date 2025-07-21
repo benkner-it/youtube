@@ -40,14 +40,14 @@ services:
       - ./vault-config.hcl:/etc/vault/config.hcl
       - ./certs:/certs
     extra_hosts:
-      - "whoami.benkner-it.test:host-gateway"
-      - "nginx.benkner-it.test:host-gateway"
+      - "whoami.benkner-it.internal:host-gateway"
+      - "nginx.benkner-it.internal:host-gateway"
 
   whoami:
     image: traefik/whoami
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.benkner-it.test`)"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.benkner-it.internal`)"
       - "traefik.http.routers.whoami.tls.certresolver=vault"
       - "traefik.http.routers.whoami.tls=true"
       - "traefik.http.services.whoami.loadbalancer.server.port=80"
@@ -56,11 +56,7 @@ services:
     image: nginx
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.nginx.rule=Host(`nginx.benkner-it.test`)"
+      - "traefik.http.routers.nginx.rule=Host(`nginx.benkner-it.internal`)"
       - "traefik.http.routers.nginx.tls.certresolver=vault"
       - "traefik.http.routers.nginx.tls=true"
       - "traefik.http.services.nginx.loadbalancer.server.port=80"
-
-networks:
-  traefik:
-    external: true
