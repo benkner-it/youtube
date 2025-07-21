@@ -1,8 +1,11 @@
-# Change password
+# Change password - orange pi user
 passwd
 
 # Change to root
 sudo su
+
+# Change password - orange pi user
+passwd
 
 # Update System
 apt update && apt upgrade -y
@@ -42,3 +45,36 @@ docker run hello-world
 
 # optional - add orangepi user to docker group - so you can run docker without root or sudo
 usermod -aG docker orangepi
+
+
+##########################################
+# Static IP Address
+##########################################
+
+# check network adapters
+networkctl
+
+# set configuration
+cat << EOF | tee /etc/systemd/network/10-static-enP3p49s0.network > /dev/null
+[Match]
+Name=enP3p49s0
+
+[Network]
+Address=192.168.1.100/24
+Gateway=192.168.1.1
+
+DNS=1.1.1.1
+DNS=8.8.8.8
+EOF
+
+# set dns servers
+ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+# start systemd-networkd and systemd-resolved
+systemctl enable systemd-networkd --now
+systemctl enable systemd-resolved --now
+
+# disable old
+systemctl disable NetworkManager --now
+
+reboot
