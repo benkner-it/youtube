@@ -16,6 +16,7 @@ services:
       - "--certificatesresolvers.vault.acme.httpchallenge.entrypoint=web"
 
       - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
 
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
