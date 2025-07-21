@@ -39,7 +39,7 @@ docker exec -e VAULT_TOKEN="$root_token" "$VAULT_CONTAINER" vault secrets enable
 docker exec -e VAULT_TOKEN="$root_token" "$VAULT_CONTAINER" vault secrets tune -max-lease-ttl=8760h pki
 # Generates a new self-signed root CA certificate and save it under `./root_ca.crt`.
 docker exec -e VAULT_TOKEN="$root_token" "$VAULT_CONTAINER" vault write -field=certificate pki/root/generate/internal \
-  common_name="benkner-it.test" \
+  common_name="benkner-it.internal" \
   issuer_name="root" \
   ttl=87600h > ./certs/root_ca.crt
 # Configure the cluster path and AIA path (Required by the ACME feature).
@@ -72,7 +72,7 @@ docker exec -e VAULT_TOKEN="$root_token" "$VAULT_CONTAINER" vault secrets enable
 docker exec -e VAULT_TOKEN="$root_token" "$VAULT_CONTAINER" vault secrets tune -max-lease-ttl=43800h pki_int
 # Generate an intermediate certificate and save the CSR under `./pki_intermediate.csr`.
 docker exec -e VAULT_TOKEN="$root_token" "$VAULT_CONTAINER" vault write -format=json pki_int/intermediate/generate/internal \
-  common_name="benkner-it.test Vault Intermediate Authority" \
+  common_name="benkner-it.internal Vault Intermediate Authority" \
   issuer_name="intermediate" \
   | jq -r '.data.csr' > ./certs/pki_intermediate.csr
 
