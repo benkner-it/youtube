@@ -11,6 +11,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
+import { seoPlugin } from '@payloadcms/plugin-seo'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -57,6 +58,11 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     formBuilderPlugin({}),
+    seoPlugin({
+      generateTitle({doc}) {
+        return doc.title ?? 'hallo'
+      },
+    }),
     // storage-adapter-placeholder
   ],
 })

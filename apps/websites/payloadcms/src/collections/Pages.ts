@@ -4,6 +4,12 @@ import { FormBlock } from '@/blocks/FormBlock'
 import { HeroBlock } from '@/blocks/HeroBlock'
 import { generatePreviewPath } from '@/utils/generatePreviewPath'
 import type { CollectionConfig, Tab } from 'payload'
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+} from '@payloadcms/plugin-seo/fields'
 
 const ContentTab: Tab = {
   label: 'Content',
@@ -19,21 +25,25 @@ const ContentTab: Tab = {
 
 const SeoTab: Tab = {
   label: 'SEO',
+  name: 'meta',
   fields: [
-    {
-      name: 'seo_title',
-      type: 'text',
-      required: true,
-    },
+    OverviewField({
+      titlePath: 'meta.title',
+      descriptionPath: 'meta.description',
+      imagePath: 'meta.image',
+    }),
+    MetaTitleField({
+      hasGenerateFn: false,
+    }),
+    MetaImageField({
+      relationTo: 'media',
+    }),
+    MetaDescriptionField({}),
   ],
 }
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
-  defaultPopulate: {
-    title: true,
-    slug: true,
-  },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -67,7 +77,6 @@ export const Pages: CollectionConfig = {
     },
     maxPerDoc: 50,
   },
-
   fields: [
     {
       name: 'title',

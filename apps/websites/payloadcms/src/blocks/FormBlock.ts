@@ -4,7 +4,8 @@ export const FormBlock: Block = {
     slug: 'form',
     fields: [
         {
-            name: 'title',
+            name: 'form_title',
+            label: "Title",
             type: 'text',
             required: true,
         },

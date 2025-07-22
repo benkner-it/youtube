@@ -198,14 +198,21 @@ export interface Page {
         blockType: 'hero';
       }
     | {
-        title: string;
+        form_title: string;
         form: string | Form;
         id?: string | null;
         blockName?: string | null;
         blockType: 'form';
       }
   )[];
-  seo_title: string;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -538,13 +545,19 @@ export interface PagesSelect<T extends boolean = true> {
         form?:
           | T
           | {
-              title?: T;
+              form_title?: T;
               form?: T;
               id?: T;
               blockName?: T;
             };
       };
-  seo_title?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

@@ -11,7 +11,7 @@ type Props = {
 export function HeroComponent({ block }: Props) {
     const image: Media = block.image as Media
     return <div>
-        {block.title}
+        {block?.title}
         <RichText data={block.subtitle} />
         {image?.url}
     </div>
