@@ -13,6 +13,6 @@ export function HeroComponent({ block }: Props) {
     return <div>
         {block.title}
         <RichText data={block.subtitle} />
-        {image.url}
+        {image?.url}
     </div>
 }

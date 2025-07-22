@@ -169,6 +169,7 @@ export interface Media {
 export interface Page {
   id: string;
   title: string;
+  slug: string;
   layout: (
     | {
         title: string;
@@ -204,8 +205,10 @@ export interface Page {
         blockType: 'form';
       }
   )[];
+  seo_title: string;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -513,6 +516,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  slug?: T;
   layout?:
     | T
     | {
@@ -540,8 +544,10 @@ export interface PagesSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
+  seo_title?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
