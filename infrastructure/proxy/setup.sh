@@ -61,11 +61,6 @@ docker exec -e VAULT_TOKEN="$root_token" "$VAULT_CONTAINER" vault write pki/conf
 
 
 
-
-
-
-
-
 # Enable the PKI secret engine on the `/pki_int` mount path.
 docker exec -e VAULT_TOKEN="$root_token" "$VAULT_CONTAINER" vault secrets enable -path=pki_int pki
 # Tweak certificate lifespan, shorter than the root CA.
