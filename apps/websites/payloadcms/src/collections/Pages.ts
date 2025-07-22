@@ -57,6 +57,7 @@ export const Pages: CollectionConfig = {
   },
 
   admin: {
+    useAsTitle: 'title',
     livePreview: {
       url: ({ data, collectionConfig, locale }) => {
         const slug: string = data.slug === 'home' ? '' : data.slug
