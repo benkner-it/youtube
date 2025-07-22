@@ -2,7 +2,8 @@ import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import React from 'react'
 import config from '@/payload.config'
-import { HeroComponent } from '@/components/Hero'
+import { HeroComponent } from './components/HeroComponent'
+import { FormComponent } from './components/FormComponent'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -22,11 +23,14 @@ export default async function HomePage() {
 
   function renderBlocks() {
     return page.layout.map(it => {
+      console.log(it.id);
       switch (it.blockType) {
         case "hero":
           return <HeroComponent block={it} key={it.id} />
+        case "form":
+          return <FormComponent block={it} key={it.id} />
         default:
-          return <div>{it.blockType}</div>
+          return <pre key={new Date().toISOString()}>{JSON.stringify(it, null, 2)}</pre>
       }
     })
   }

@@ -1,4 +1,5 @@
-import { HeroBlock } from '@/components/Hero'
+import { FormBlock } from '@/blocks/FormBlock'
+import { HeroBlock } from '@/blocks/HeroBlock'
 import type { CollectionConfig } from 'payload'
 
 export const Pages: CollectionConfig = {
@@ -14,7 +15,7 @@ export const Pages: CollectionConfig = {
       name: 'layout',
       type: 'blocks',
       required: true,
-      blocks: [HeroBlock],
+      blocks: [HeroBlock, FormBlock],
     },
   ],
 }
