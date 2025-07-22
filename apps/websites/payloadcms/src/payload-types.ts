@@ -169,7 +169,8 @@ export interface Media {
 export interface Page {
   id: string;
   title: string;
-  slug: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
   layout: (
     | {
         title: string;
@@ -524,6 +525,7 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  slugLock?: T;
   layout?:
     | T
     | {

@@ -10,6 +10,7 @@ import {
   MetaTitleField,
   OverviewField,
 } from '@payloadcms/plugin-seo/fields'
+import { slugField } from '@/fields/slug'
 
 const ContentTab: Tab = {
   label: 'Content',
@@ -44,6 +45,10 @@ const SeoTab: Tab = {
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
+  defaultPopulate: {
+    title: true,
+    slug: true,
+  },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -83,11 +88,7 @@ export const Pages: CollectionConfig = {
       type: 'text',
       required: true,
     },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-    },
+    ...slugField(),
     {
       type: 'tabs',
       tabs: [ContentTab, SeoTab],
