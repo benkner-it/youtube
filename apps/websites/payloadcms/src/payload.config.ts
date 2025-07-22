@@ -59,7 +59,7 @@ export default buildConfig({
     payloadCloudPlugin(),
     formBuilderPlugin({}),
     seoPlugin({
-      generateTitle({doc}) {
+      generateTitle({ doc }) {
         return doc.title ?? 'hallo'
       },
     }),
