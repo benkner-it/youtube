@@ -204,23 +204,54 @@ export interface Media {
 export interface Page {
   id: string;
   tenant?: (string | null) | Tenant;
-  title?: string | null;
+  title: string;
   slug?: string | null;
+  layout: (
+    | {
+        title: string;
+        subtitle: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        image: string | Media;
+        cta_button: {
+          label: string;
+          link: string;
+        };
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'hero';
+      }
+    | {
+        form_title: string;
+        form: string | Form;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'form';
+      }
+  )[];
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "navigation".
- */
-export interface Navigation {
-  id: string;
-  tenant?: (string | null) | Tenant;
-  name: string;
-  slug: string;
-  domain: string;
-  updatedAt: string;
-  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -398,6 +429,19 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: string;
+  tenant?: (string | null) | Tenant;
+  name: string;
+  slug: string;
+  domain: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions".
  */
 export interface FormSubmission {
@@ -547,8 +591,43 @@ export interface PagesSelect<T extends boolean = true> {
   tenant?: T;
   title?: T;
   slug?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              image?: T;
+              cta_button?:
+                | T
+                | {
+                    label?: T;
+                    link?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        form?:
+          | T
+          | {
+              form_title?: T;
+              form?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
