@@ -16,7 +16,6 @@ export default async function Page({ params }: Props) {
     const { tenant, slug } = await params;
     const paramsConfig = {
         tenant: tenant,
-        locale: "es",
         page: "home"
     }
 
@@ -59,11 +58,18 @@ export default async function Page({ params }: Props) {
     }
 
     return (
-        <div>
+        <>
             {user && <LivePreviewListener />}
-            {user && <div><a target='_blank' href={`/admin/collections/pages/${page.id}`}>Edit</a></div>}
+            {
+                user && <div>
+                    <a
+                        target='_blank' href={`/admin/collections/pages/${page.id}?locale=${locale}`}>
+                        Edit
+                    </a>
+                </div>
+            }
             Hello World - {page.title}
             <RenderBlocks blocks={page.layout} />
-        </div>
+        </>
     )
 }
