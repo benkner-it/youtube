@@ -18,15 +18,32 @@ import { Navigation } from './collections/Navigation'
 import { isSuperAdmin } from './access/isSuperAdmin'
 import { getUserTenantIDs } from './utilities/getUserTenantIDs'
 import Users from './collections/Users'
+import { en } from '@payloadcms/translations/languages/en'
+import { de } from '@payloadcms/translations/languages/de'
+import { es } from '@payloadcms/translations/languages/es'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  i18n: {
+    supportedLanguages: { es, de, en },
+    fallbackLanguage: 'es',
+  },
+  localization: {
+    locales: ['en', 'es', 'de'],
+    defaultLocale: 'es',
+    fallback: true,
+  },
   admin: {
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
+    },
+    components: {
+      graphics: {
+        Logo: '@/custom/Logo.tsx',
+      },
     },
     livePreview: {
       breakpoints: [
@@ -72,6 +89,7 @@ export default buildConfig({
     multiTenantPlugin<Config>({
       collections: {
         pages: {},
+        media: {},
         navigation: {
           isGlobal: true,
         },
@@ -91,7 +109,6 @@ export default buildConfig({
         includeDefaultField: false,
       },
       userHasAccessToAllTenants: (user) => isSuperAdmin(user),
-
     }),
     // storage-adapter-placeholder
   ],

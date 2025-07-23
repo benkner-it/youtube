@@ -96,7 +96,7 @@ export interface Config {
   };
   globals: {};
   globalsSelect: {};
-  locale: null;
+  locale: 'en' | 'es' | 'de';
   user: User & {
     collection: 'users';
   };
@@ -184,6 +184,7 @@ export interface Tenant {
  */
 export interface Media {
   id: string;
+  tenant?: (string | null) | Tenant;
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -205,7 +206,6 @@ export interface Page {
   id: string;
   tenant?: (string | null) | Tenant;
   title: string;
-  slug?: string | null;
   layout: (
     | {
         title: string;
@@ -249,6 +249,8 @@ export interface Page {
     image?: (string | null) | Media;
     description?: string | null;
   };
+  nav_title?: string | null;
+  slug?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -570,6 +572,7 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  tenant?: T;
   alt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -590,7 +593,6 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   tenant?: T;
   title?: T;
-  slug?: T;
   layout?:
     | T
     | {
@@ -625,6 +627,8 @@ export interface PagesSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  nav_title?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
