@@ -2,7 +2,7 @@ import { authenticated } from '@/access/authenticated'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { FormBlock } from '@/blocks/FormBlock'
 import { HeroBlock } from '@/blocks/HeroBlock'
-import { generatePreviewPath } from '@/utils/generatePreviewPath'
+import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import type { CollectionConfig, Tab } from 'payload'
 import {
   MetaDescriptionField,
