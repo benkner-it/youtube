@@ -7,7 +7,6 @@ type Props = {
 export function RenderBlocks({ blocks }: Props) {
 
     return blocks.map(it => {
-        console.log(it.id);
         switch (it.blockType) {
             case "hero":
                 return <HeroComponent block={it} key={it.id} />

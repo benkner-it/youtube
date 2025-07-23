@@ -1,10 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
-import { ensureUniqueSlug } from './hooks/ensureUniqueSlug'
 import { superAdminOrTenantAdminAccess } from './access/superAdminOrTenantAdmin'
 import { ContentTab } from './tabs/content-tab'
 import { SeoTab } from './tabs/seo-tab'
-import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { NavigationTab } from './tabs/navigation-tab'
 
 export const Pages: CollectionConfig = {
@@ -42,15 +40,18 @@ export const Pages: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     livePreview: {
-      url: ({ data, collectionConfig, locale }) => {
-        const slug: string = data.slug === 'home' ? '' : data.slug
-
-        const path = generatePreviewPath({
-          slug: slug,
-          collection: 'pages',
+      url: async ({ data, collectionConfig, locale, req }) => {
+        const tenantId = data.tenant
+        //TODO is there a better way?
+        const foundTenant = await req.payload.findByID({
+          collection: 'tenants',
+          id: tenantId,
         })
 
-        return path
+        const url =
+          '/' + [foundTenant.slug, locale.code, data.slug].filter((it) => Boolean(it)).join('/')
+
+        return url
       },
     },
   },
@@ -65,20 +66,4 @@ export const Pages: CollectionConfig = {
       tabs: [ContentTab, SeoTab, NavigationTab],
     },
   ],
-  // fields: [
-  //   {
-  //     name: 'title',
-  //     type: 'text',
-  //   },
-  //   {
-  //     name: 'slug',
-  //     type: 'text',
-  //     defaultValue: 'home',
-  //     hooks: {
-  //       beforeValidate: [ensureUniqueSlug],
-  //     },
-  //     index: true,
-  //   },
-
-  // ],
 }

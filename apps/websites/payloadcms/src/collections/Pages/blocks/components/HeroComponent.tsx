@@ -1,6 +1,5 @@
 import { Media, Page } from "@/payload-types"
 import { RichText } from "@payloadcms/richtext-lexical/react";
-import { Block } from "payload";
 
 type HeroProps = Extract<Page['layout'][0], { blockType: 'hero' }>;
 

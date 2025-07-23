@@ -1,6 +1,5 @@
 import { Page } from "@/payload-types"
 
-
 type FormProps = Extract<Page['layout'][0], { blockType: 'form' }>;
 
 type Props = {
