@@ -14,25 +14,14 @@ export default async function Page({ params }: Props) {
     const payloadConfig = await config;
 
     const { tenant, slug } = await params;
-    const paramsConfig = {
-        tenant: tenant,
-        page: "home"
+    const localeInfo = getLocale(slug, payloadConfig.localization as LocalizationConfig);
+
+    let pageSlug = "home";
+    if (localeInfo.hasLang && slug && slug[1]) {
+        pageSlug = slug[1];
     }
-
-    // more stable
-    const localizationConfig = (payloadConfig.localization as LocalizationConfig)
-    const locales = (payloadConfig.localization as LocalizationConfig)
-        .locales
-        .map((it) => (it as Locale).code)
-
-    let locale = localizationConfig.defaultLocale;
-
-    if (slug && slug[0] && locales.includes(slug[0])) {
-        locale = slug[0];
-    } else {
-        if (slug && slug[0]) {
-            paramsConfig.page = slug[0]
-        }
+    if (!localeInfo.hasLang && slug && slug[0]) {
+        pageSlug = slug[0]
     }
 
     const payload = await getPayload({ config: payloadConfig })
@@ -41,10 +30,10 @@ export default async function Page({ params }: Props) {
 
     const { docs: [page] } = await payload.find({
         collection: "pages",
-        locale: locale as any,
+        locale: localeInfo.lang as any,
         where: {
             slug: {
-                equals: "home"
+                equals: pageSlug
             },
             'tenant.slug': {
                 equals: tenant
@@ -63,7 +52,7 @@ export default async function Page({ params }: Props) {
             {
                 user && <div>
                     <a
-                        target='_blank' href={`/admin/collections/pages/${page.id}?locale=${locale}`}>
+                        target='_blank' href={`/admin/collections/pages/${page.id}?locale=${localeInfo.lang}`}>
                         Edit
                     </a>
                 </div>
@@ -73,3 +62,46 @@ export default async function Page({ params }: Props) {
         </>
     )
 }
+
+function getLocale(
+    slug: string[] | undefined,
+    localization: LocalizationConfig): { hasLang: boolean, lang: string } {
+
+    const defaultLocale = localization.defaultLocale;
+
+    if (!slug) {
+        return {
+            hasLang: false,
+            lang: defaultLocale
+        }
+    }
+
+    const localeString = slug[0];
+
+    const availableLangs = localization
+        .locales
+        .map((it) => (it as Locale).code)
+
+    if (!localeString) {
+        return {
+            hasLang: false,
+            lang: defaultLocale
+        }
+    }
+
+    const normalized = localeString.toLowerCase().trim();
+
+    if (availableLangs.includes(normalized)) {
+        return {
+            hasLang: true,
+            lang: normalized
+        };
+    }
+    return {
+        hasLang: false,
+        lang: defaultLocale
+    };
+
+    // const baseCode = normalized.split('-')[0];
+    // return availableCodes.includes(baseCode) ? baseCode : defaultLocale;
+};
