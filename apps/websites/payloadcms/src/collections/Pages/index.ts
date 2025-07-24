@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { superAdminOrTenantAdminAccess } from './access/superAdminOrTenantAdmin'
+import { superAdminOrTenantAdminAccess } from '@/access/superAdminOrTenantAdmin'
 import { ContentTab } from './tabs/content-tab'
 import { SeoTab } from './tabs/seo-tab'
 import { NavigationTab } from './tabs/navigation-tab'
