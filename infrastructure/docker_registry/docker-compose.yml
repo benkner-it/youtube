@@ -3,23 +3,30 @@ services:
     image: registry:2
     restart: always
     environment:
-      # CORS für Web UI aktivieren - Domain anpassen!
-      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin: '[https://registry-ui.benkner-it.com]'
-      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Methods: '[HEAD,GET,OPTIONS,DELETE]'
-      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Credentials: '[true]'
-      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Headers: '[Authorization,Accept,Cache-Control]'
-      REGISTRY_HTTP_HEADERS_Access-Control-Expose-Headers: '[Docker-Content-Digest]'
-      # Delete-Funktionalität aktivieren
-      REGISTRY_STORAGE_DELETE_ENABLED: 'true'
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+
+      # # CORS für Web UI aktivieren - Domain anpassen!
+      # REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin: '[https://registry-ui.benkner-it.com]'
+      # REGISTRY_HTTP_HEADERS_Access-Control-Allow-Methods: '[HEAD,GET,OPTIONS,DELETE]'
+      # REGISTRY_HTTP_HEADERS_Access-Control-Allow-Credentials: '[true]'
+      # REGISTRY_HTTP_HEADERS_Access-Control-Allow-Headers: '[Authorization,Accept,Cache-Control]'
+      # REGISTRY_HTTP_HEADERS_Access-Control-Expose-Headers: '[Docker-Content-Digest]'
+      
+      # # Delete-Funktionalität aktivieren
+      # REGISTRY_STORAGE_DELETE_ENABLED: 'true'
     volumes:
       - ./data:/var/lib/registry
+      - ./auth:/auth
     networks:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.registry.rule=Host(`registry.benkner-it.com`)"
-      - "traefik.http.routers.registry-ui.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.registry.tls=true"
+      - "traefik.http.routers.registry-public.rule=Host(`registry.benkner-it.com`)"
+      - "traefik.http.routers.registry-public.tls=false"
+      - "traefik.http.routers.registry-public.entrypoints=cloudflare"
+
       - "traefik.http.services.registry.loadbalancer.server.port=5000"
 
   registry-ui:
@@ -27,10 +34,13 @@ services:
     container_name: registry-ui
     restart: always
     environment:
-      # Registry URL (intern)
+
       SINGLE_REGISTRY: 'true'
-      REGISTRY_TITLE: 'My Docker Registry'
-      REGISTRY_URL: 'http://registry:5000'
+      REGISTRY_TITLE: 'Benkner IT Registry'
+      REGISTRY_URL: 'https://registry.benkner-it.com'
+      NGINX_PROXY_PASS_URL: 'http://registry'
+
+
       # Delete-Button in UI aktivieren
       DELETE_IMAGES: 'true'
       # Theme (optional)
@@ -43,12 +53,12 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.registry-ui.rule=Host(`registry-ui.benkner-it.com`)"
-      - "traefik.http.routers.registry-ui.entrypoints=websecure"
-      - "traefik.http.routers.registry-ui.tls.certresolver=letsencrypt"
-      - "traefik.http.services.registry-ui.loadbalancer.server.port=80"
-      - "traefik.docker.network=traefik"
 
+      - "traefik.http.routers.registry-ui.rule=Host(`registry-ui.benkner-it.com`)"
+      - "traefik.http.routers.registry-ui.tls=false"
+      - "traefik.http.routers.registry-ui.entrypoints=cloudflare"
+
+      - "traefik.http.services.registry-ui.loadbalancer.server.port=80"
 
 networks:
   traefik:

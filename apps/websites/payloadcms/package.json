@@ -16,8 +16,8 @@
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
-    "docker:build": "docker build -t test .",
-    "docker:push": "docker push tobiasbenkner/web"
+    "docker:build": "docker build -t registry.benkner-it.com/websites .",
+    "docker:push": "docker push registry.benkner-it.com/websites"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "3.48.0",

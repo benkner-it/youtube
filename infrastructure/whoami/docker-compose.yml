@@ -13,7 +13,7 @@ services:
       - "traefik.http.routers.whoami.tls.certresolver=vault"
       - "traefik.http.routers.whoami.tls=true"
 
-      - "traefik.http.routers.whoami-public.rule=Host(`test.benkner-it.com`)"
+      - "traefik.http.routers.whoami-public.rule=Host(`whoami.benkner-it.com`)"
       - "traefik.http.routers.whoami-public.tls=false"
       - "traefik.http.routers.whoami-public.entrypoints=cloudflare"
 
