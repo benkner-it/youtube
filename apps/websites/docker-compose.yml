@@ -1,0 +1,17 @@
+services:
+  payloadcms:
+    image: test
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_URI=mongodb://root:example@mongo:27017/
+
+  mongo:
+    image: mongo
+    command:
+      - --storageEngine=wiredTiger
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    # volumes:
+    #   - ./data:/data/db

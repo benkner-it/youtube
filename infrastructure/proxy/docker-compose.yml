@@ -1,7 +1,14 @@
+networks:
+  traefik:
+    external: true
+    
 services:
   traefik:
     image: traefik:v3.4
+    restart: always
     command:
+      - "--entrypoints.cloudflare.address=:8080"
+
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
@@ -11,10 +18,13 @@ services:
       - "--entrypoints.websecure.asDefault=true"
       
       - "--certificatesresolvers.vault.acme.caServer=http://vault:8200/v1/pki_int/acme/directory"
-      - "--certificatesresolvers.vault.acme.email=info@example.com"
+      - "--certificatesresolvers.vault.acme.email=info@benkner-it.com"
       - "--certificatesresolvers.vault.acme.storage=/acme/acme.json"
       - "--certificatesresolvers.vault.acme.httpchallenge.entrypoint=web"
 
+      - "--certificatesResolvers.letsencrypt.acme.httpChallenge.entryPoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=info@benkner-it.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/acme/letsencrypt.json"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
 
@@ -24,40 +34,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - vault
+      - "8080:8080"
+    networks:
+      - traefik
 
-  vault:
-    image: hashicorp/vault:1.20
-    command: server -config=/etc/vault/config.hcl
-    cap_add:
-      - IPC_LOCK
-    ports:
-      - "8200:8200"
-    environment:
-      - VAULT_ADDR=http://127.0.0.1:8200
-    volumes:
-      - ./vault-data:/vault/file
-      - ./vault-config.hcl:/etc/vault/config.hcl
-      - ./certs:/certs
-    extra_hosts:
-      - "whoami.benkner-it.internal:host-gateway"
-      - "nginx.benkner-it.internal:host-gateway"
-
-  whoami:
-    image: traefik/whoami
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.benkner-it.internal`)"
-      - "traefik.http.routers.whoami.tls.certresolver=vault"
-      - "traefik.http.routers.whoami.tls=true"
-      - "traefik.http.services.whoami.loadbalancer.server.port=80"
-
-  nginx:
-    image: nginx
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.nginx.rule=Host(`nginx.benkner-it.internal`)"
-      - "traefik.http.routers.nginx.tls.certresolver=vault"
-      - "traefik.http.routers.nginx.tls=true"
-      - "traefik.http.services.nginx.loadbalancer.server.port=80"

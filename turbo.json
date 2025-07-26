@@ -16,6 +16,14 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "docker:build": {
+      "cache": false,
+      "persistent": true
+    },
+    "docker:push": {
+      "cache": false,
+      "persistent": true
     }
   }
 }

@@ -1,0 +1,22 @@
+networks:
+  traefik:
+    external: true
+
+services:
+  whoami:
+    image: traefik/whoami
+    restart: always
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.whoami.rule=Host(`whoami.benkner-it.internal`)"
+      - "traefik.http.routers.whoami.tls.certresolver=vault"
+      - "traefik.http.routers.whoami.tls=true"
+
+      - "traefik.http.routers.whoami-public.rule=Host(`test.benkner-it.com`)"
+      - "traefik.http.routers.whoami-public.tls=false"
+      - "traefik.http.routers.whoami-public.entrypoints=cloudflare"
+
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
+    networks:
+      - traefik
