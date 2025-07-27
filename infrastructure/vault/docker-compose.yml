@@ -1,23 +1,51 @@
+services:
+  registry:
+    image: registry:2
+    restart: always
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+
+      # # CORS für Web UI aktivieren - Domain anpassen!
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin: '[https://registry-ui.benkner-it.com]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Methods: '[HEAD,GET,OPTIONS,DELETE]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Credentials: '[true]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Headers: '[Authorization,Accept,Cache-Control]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Expose-Headers: '[Docker-Content-Digest]'
+      # REGISTRY_STORAGE_DELETE_ENABLED: 'true'
+      
+      # # Delete-Funktionalität aktivieren
+      # REGISTRY_STORAGE_DELETE_ENABLED: 'true'
+    volumes:
+      - ./data:/var/lib/registry
+      - ./auth:/auth
+    networks:
+      - traefik
+    
+
+  registry-ui:
+    image: joxit/docker-registry-ui:main
+    container_name: registry-ui
+    restart: always
+    environment:
+      - SINGLE_REGISTRY=true
+      - REGISTRY_TITLE=Docker Registry UI
+      # - DELETE_IMAGES=true
+      - SHOW_CONTENT_DIGEST=true
+      - NGINX_PROXY_PASS_URL=http://registry:5000
+      - SHOW_CATALOG_NB_TAGS=true
+      - CATALOG_MIN_BRANCHES=1
+      - CATALOG_MAX_BRANCHES=1
+      - TAGLIST_PAGE_SIZE=100
+      - REGISTRY_SECURED=false
+      - CATALOG_ELEMENTS_LIMIT=1000
+
+    depends_on:
+      - registry
+    networks:
+      - traefik
+
 networks:
   traefik:
     external: true
-
-services:
-  vault:
-    image: hashicorp/vault:1.20
-    command: server -config=/etc/vault/config.hcl
-    restart: always
-    cap_add:
-      - IPC_LOCK
-    ports:
-      - "8200:8200"
-    environment:
-      - VAULT_ADDR=http://127.0.0.1:8200
-    volumes:
-      - ./vault-data:/vault/file
-      - ./vault-config.hcl:/etc/vault/config.hcl
-      - ./certs:/certs
-    extra_hosts:
-      - "whoami.benkner-it.internal:host-gateway"
-    networks:
-      - traefik
