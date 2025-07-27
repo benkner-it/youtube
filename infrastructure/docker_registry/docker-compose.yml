@@ -21,13 +21,7 @@ services:
       - ./auth:/auth
     networks:
       - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.registry-public.rule=Host(`registry.benkner-it.com`)"
-      - "traefik.http.routers.registry-public.tls=false"
-      - "traefik.http.routers.registry-public.entrypoints=cloudflare"
-
-      - "traefik.http.services.registry.loadbalancer.server.port=5000"
+    
 
   registry-ui:
     image: joxit/docker-registry-ui:main
@@ -36,8 +30,8 @@ services:
     environment:
 
       SINGLE_REGISTRY: 'true'
-      REGISTRY_TITLE: 'Benkner IT Registry'
-      REGISTRY_URL: 'https://registry.benkner-it.com'
+      # REGISTRY_TITLE: 'Benkner IT Registry'
+      # REGISTRY_URL: 'https://registry.benkner-it.com'
       NGINX_PROXY_PASS_URL: 'http://registry'
 
 
@@ -53,10 +47,9 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-
       - "traefik.http.routers.registry-ui.rule=Host(`registry-ui.benkner-it.com`)"
-      - "traefik.http.routers.registry-ui.tls=false"
-      - "traefik.http.routers.registry-ui.entrypoints=cloudflare"
+      - "traefik.http.routers.registry-ui.tls.certresolver=vault"
+      - "traefik.http.routers.registry-ui.tls=true"
 
       - "traefik.http.services.registry-ui.loadbalancer.server.port=80"
 

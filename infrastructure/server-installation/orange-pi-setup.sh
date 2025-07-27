@@ -93,3 +93,10 @@ echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudf
 apt update
 apt install -y cloudflared
 cloudflared service install $CLOUDFLARE_TOKEN
+
+
+##########################################
+# Netbird
+##########################################
+curl -fsSL https://pkgs.netbird.io/install.sh | sh
+netbird up --setup-key $SETUP_TOKEN
