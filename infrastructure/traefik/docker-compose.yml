@@ -7,8 +7,6 @@ services:
     image: traefik:v3.4
     restart: always
     command:
-      - "--entrypoints.cloudflare.address=:8080"
-
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
@@ -22,19 +20,14 @@ services:
       - "--certificatesresolvers.vault.acme.storage=/acme/acme.json"
       - "--certificatesresolvers.vault.acme.httpchallenge.entrypoint=web"
 
-      - "--certificatesResolvers.letsencrypt.acme.httpChallenge.entryPoint=web"
-      - "--certificatesresolvers.letsencrypt.acme.email=info@benkner-it.com"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/acme/letsencrypt.json"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./acme:/acme"
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
     networks:
       - traefik
 

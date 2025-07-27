@@ -1,0 +1,23 @@
+networks:
+  traefik:
+    external: true
+
+services:
+  vault:
+    image: hashicorp/vault:1.20
+    command: server -config=/etc/vault/config.hcl
+    restart: always
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_ADDR=http://127.0.0.1:8200
+    volumes:
+      - ./vault-data:/vault/file
+      - ./vault-config.hcl:/etc/vault/config.hcl
+      - ./certs:/certs
+    extra_hosts:
+      - "whoami.benkner-it.internal:host-gateway"
+    networks:
+      - traefik
